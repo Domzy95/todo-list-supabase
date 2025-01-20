@@ -122,7 +122,7 @@ export default function Home() {
             onChange={(e) => setSearch(e.target.value)}
             borderWidth="2px"
             size="lg"
-            w="72%"
+            w={{ base: "100%", md: "72%" }}
           />
           {/* Prikaz nalog */}
           <VStack mt={10} spacing={2} align="stretch" w="100%">
