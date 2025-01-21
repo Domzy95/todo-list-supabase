@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { FaPen } from "react-icons/fa6";
 import { IoMdCheckmark } from "react-icons/io";
-
+import { time } from "../pages/time";
 import {
   Box,
   Heading,
@@ -28,7 +28,10 @@ export default function Home() {
 
   const addTask = () => {
     if (task.trim()) {
-      setTasks([...tasks, { text: task, completed: false }]);
+      setTasks([
+        ...tasks,
+        { text: task, completed: false, addedAt: new Date() },
+      ]);
       setTask("");
     }
   };
@@ -41,6 +44,10 @@ export default function Home() {
   // Posodobi besedilo naloge na določenem indeksu in končaj urejanje.
   // Po končanem urejanju se izklopi način urejanja in izprazni besedilo.
   const saveTask = (index) => {
+    if (editedTask.trim() === "") {
+      alert("Task cannot be empty!");
+      return;
+    }
     setTasks((prevTasks) =>
       prevTasks.map((t, i) => (i === index ? { ...t, text: editedTask } : t))
     );
@@ -61,7 +68,8 @@ export default function Home() {
   // Odstrani nalogo iz seznama na določenem indeksu.
   // Filtriraj seznam nalog in ohrani le tiste, ki niso označene za izbris.
   const deleteTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+    if (window.confirm("Are you sure you want to delete this task?"))
+      setTasks(tasks.filter((_, i) => i !== index));
   };
   // Filtriraj naloge na podlagi iskalnega niza, pri čemer ignoriraš velikost črk.
   // To omogoča uporabniku iskanje nalog po besedilu.
@@ -72,7 +80,13 @@ export default function Home() {
   // če naloge niso shranjene, inicializiraj seznam kot prazen.
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    setTasks(savedTasks);
+    const savedTime = savedTasks.map((task) => {
+      return {
+        ...task,
+        addedAt: new Date(task.addedAt),
+      };
+    });
+    setTasks(savedTime);
   }, []);
   // Ob vsaki spremembi nalog shrani posodobljen seznam nalog v `localStorage`.
   // To omogoča, da naloge ostanejo shranjene tudi po osvežitvi strani.
@@ -87,7 +101,6 @@ export default function Home() {
           Whats the plan for today?
         </Heading>
         <VStack spacing={4}>
-          {/* Vnosna polja za nalogo in iskanje */}
           <HStack>
             {/* Vnosna polja za nalogo in gumb za dodajanje naloge */}
             <Input
@@ -157,12 +170,18 @@ export default function Home() {
                 ) : (
                   // Običajen prikaz naloge
                   <>
-                    <Text
-                      color={t.completed ? "gray.500" : "white"}
-                      textDecoration={t.completed ? "line-through" : "none"}
-                    >
-                      {t.text}
-                    </Text>
+                    <HStack justify="space-between" w="100%">
+                      <Text
+                        color={t.completed ? "gray.500" : "white"}
+                        textDecoration={t.completed ? "line-through" : "none"}
+                      >
+                        {t.text}
+                      </Text>
+                      {/* ČASOVNI PRIKAZ */}
+                      <Text mr={2} color="orange.500" fontSize="sm">
+                        {time(t.addedAt)}
+                      </Text>
+                    </HStack>
                     <HStack>
                       <Icon
                         as={IoMdCheckmark}
