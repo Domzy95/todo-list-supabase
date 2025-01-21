@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { FaPen } from "react-icons/fa6";
 import { IoMdCheckmark } from "react-icons/io";
-import { time } from "../pages/time";
+import { time } from "./utils/time";
 import {
   Box,
   Heading,

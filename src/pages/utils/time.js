@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 export function time(timeCreated) {
   const now = Date.now();
