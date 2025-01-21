@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { FaPen } from "react-icons/fa6";
 import { IoMdCheckmark } from "react-icons/io";
-import { time } from "../utils/time";
+
 import {
   Box,
   Heading,
@@ -28,10 +28,7 @@ export default function Home() {
 
   const addTask = () => {
     if (task.trim()) {
-      setTasks([
-        ...tasks,
-        { text: task, completed: false, addedAt: new Date() },
-      ]);
+      setTasks([...tasks, { text: task, completed: false }]);
       setTask("");
     }
   };
@@ -80,13 +77,8 @@ export default function Home() {
   // če naloge niso shranjene, inicializiraj seznam kot prazen.
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const savedTime = savedTasks.map((task) => {
-      return {
-        ...task,
-        addedAt: new Date(task.addedAt),
-      };
-    });
-    setTasks(savedTime);
+
+    setTasks(savedTasks);
   }, []);
   // Ob vsaki spremembi nalog shrani posodobljen seznam nalog v `localStorage`.
   // To omogoča, da naloge ostanejo shranjene tudi po osvežitvi strani.
@@ -176,10 +168,6 @@ export default function Home() {
                         textDecoration={t.completed ? "line-through" : "none"}
                       >
                         {t.text}
-                      </Text>
-                      {/* ČASOVNI PRIKAZ */}
-                      <Text mr={2} color="orange.500" fontSize="sm">
-                        {time(t.addedAt)}
                       </Text>
                     </HStack>
                     <HStack>
