@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { FaPen } from "react-icons/fa6";
 import { IoMdCheckmark } from "react-icons/io";
-
 import {
   Box,
   Heading,
@@ -90,16 +89,18 @@ export default function Home() {
     <Flex align="top" justify="center" h="100vh" bg="gray.900">
       <Box p={5} maxW="500px" w="100%">
         <Heading textStyle="5xl" color="white" mb={10} textAlign="center">
-          Whats the plan for today?
+          Whats your plan for today ? 📋✅
         </Heading>
+
         <VStack spacing={4}>
           <HStack>
             {/* Vnosna polja za nalogo in gumb za dodajanje naloge */}
             <Input
+              borderRadius="md"
               w="70%"
               borderColor="orange.500"
               color="white"
-              placeholder="Add a task"
+              placeholder="Got Something To Do?"
               _placeholder={{ color: "grey" }}
               value={task}
               onChange={(e) => setTask(e.target.value)}
@@ -107,6 +108,8 @@ export default function Home() {
               size="lg"
             />
             <Button
+              alignContent="center"
+              borderRadius="md"
               _hover={{ bg: "orange.600" }}
               bg="orange.500"
               colorScheme="teal"
@@ -114,14 +117,15 @@ export default function Home() {
               size="lg"
               w="25%"
             >
-              Add Task
+              Add task
             </Button>
             {/* Ime iskalnega polja */}
           </HStack>
           <Input
+            borderRadius="md"
             borderColor="orange.500"
             color="white"
-            placeholder="Search tasks"
+            placeholder="Type to search your tasks"
             _placeholder={{ color: "grey" }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
