@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { FaPen } from "react-icons/fa6";
 import { IoMdCheckmark } from "react-icons/io";
+import { time } from "../utils/time";
+import { HiOutlineClock } from "react-icons/hi";
+
 import {
   Box,
   Heading,
@@ -27,7 +30,10 @@ export default function Home() {
 
   const addTask = () => {
     if (task.trim()) {
-      setTasks([...tasks, { text: task, completed: false }]);
+      setTasks([
+        ...tasks,
+        { text: task, completed: false, timeCreated: new Date() },
+      ]);
       setTask("");
     }
   };
@@ -166,21 +172,35 @@ export default function Home() {
                 ) : (
                   // Običajen prikaz naloge
                   <>
-                    <HStack justify="space-between" w="100%">
+                    <VStack align="start" spacing={1} w="80%">
                       <Text
+                        fontWeight="bold"
                         color={t.completed ? "gray.500" : "white"}
                         textDecoration={t.completed ? "line-through" : "none"}
                       >
                         {t.text}
                       </Text>
-                    </HStack>
+
+                      <HStack>
+                        <Icon
+                          as={HiOutlineClock}
+                          boxSize={4}
+                          color="gray.400"
+                        />
+                        <Text color="gray.400" fontSize="sm" fontStyle="italic">
+                          {time(t.timeCreated)}
+                        </Text>
+                      </HStack>
+                    </VStack>
                     <HStack>
                       <Icon
                         as={IoMdCheckmark}
                         boxSize={6}
                         cursor="pointer"
-                        color="white"
-                        _hover={{ color: "orange.600" }}
+                        color={t.completed ? "green.500" : "white"}
+                        _hover={{
+                          color: t.completed ? "red.600" : "orange.600",
+                        }}
                         onClick={() => toggleTask(index)}
                       />
                       <Icon

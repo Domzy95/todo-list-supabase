@@ -1,19 +1,13 @@
 import React from "react";
 
-export function time(timeCreated) {
-  const now = Date.now();
-  const diffInSeconds = Math.floor((now - timeCreated) / 1000);
+export function time(date) {
+  const taskDate = new Date(date);
+  const days = taskDate.getDate();
+  const months = taskDate.getMonth() + 1;
+  const years = taskDate.getFullYear();
 
-  if (diffInSeconds < 60) {
-    return "";
-  }
-  if (diffInSeconds < 3600) {
-    return `Added ${Math.floor(diffInSeconds / 60)} minutes ago`;
-  }
-  if (diffInSeconds < 86400) {
-    return `Added ${Math.floor(diffInSeconds / 3600)} hours ago`;
-  }
-  if (diffInSeconds < 604800) {
-    return `Added ${Math.floor(diffInSeconds / 86400)} days ago`;
-  }
+  const hours = taskDate.getHours();
+  const minutes = taskDate.getMinutes();
+  const seconds = taskDate.getSeconds();
+  return `${hours}:${minutes}, ${days}/${months}/${years} `;
 }
