@@ -53,8 +53,8 @@ export default function Home() {
     setTasks((prevTasks) =>
       prevTasks.map((t, i) => (i === index ? { ...t, text: editedTask } : t))
     );
-    setIsEditing("null"); // Končamo urejanje
-    setEditedTask(""); // Počistimo vrednost urejanja
+    setIsEditing("null");
+    setEditedTask("");
   };
 
   // Preklopi stanje naloge med opravljeno in neopravljeno.
@@ -184,7 +184,6 @@ export default function Home() {
                       >
                         {t.text}
                       </Text>
-
                       <HStack>
                         <Icon
                           as={HiOutlineClock}
