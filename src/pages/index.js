@@ -32,7 +32,7 @@ export default function Home() {
     if (task.trim()) {
       setTasks([
         ...tasks,
-        { text: task, completed: false, timeCreated: new Date() },
+        { text: task, completed: false, timeCreated: new Date().toISOString() },
       ]);
       setTask("");
     }
@@ -82,8 +82,12 @@ export default function Home() {
   // če naloge niso shranjene, inicializiraj seznam kot prazen.
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const parsedTasks = savedTasks.map((task) => ({
+      ...task,
+      timeCreated: new Date(task.timeCreated),
+    }));
 
-    setTasks(savedTasks);
+    setTasks(parsedTasks);
   }, []);
   // Ob vsaki spremembi nalog shrani posodobljen seznam nalog v `localStorage`.
   // To omogoča, da naloge ostanejo shranjene tudi po osvežitvi strani.
