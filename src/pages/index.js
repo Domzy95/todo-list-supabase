@@ -97,7 +97,7 @@ export default function Home() {
 
   return (
     <Flex align="top" justify="center" h="100vh" bg="gray.900">
-      <Box p={5} maxW="500px" w="100%">
+      <Box p={5} maxW="500px" h="100%" w="100%">
         <Heading textStyle="5xl" color="white" mb={10} textAlign="center">
           Whats your plan for today ? 📋✅
         </Heading>
@@ -144,7 +144,27 @@ export default function Home() {
             w={{ base: "100%", md: "72%" }}
           />
           {/* Prikaz nalog */}
-          <VStack mt={10} spacing={2} align="stretch" w="100%">
+          <VStack
+            overflowY="auto"
+            maxH="60vh"
+            mt={10}
+            spacing={2}
+            align="stretch"
+            w="100%"
+            //navpični drsnik
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#FF8C00",
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#FFA500",
+              },
+            }}
+          >
             {filteredTasks.map((t, index) => (
               <HStack
                 borderRadius="md"
