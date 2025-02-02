@@ -20,8 +20,8 @@ const TaskList = ({
     tasks?.filter((task) => {
       if (filter === "completed") return task?.completed;
       if (filter === "incomplete") return !task?.completed;
-      return true; // All tasks
-    }) || []; // Provide an empty array if `tasks` is undefined
+      return true;
+    }) || []; // Če so taski undefined vrne empty array da se izognemo napaki
 
   // Nato filtriramo po iskanju
   const searchedTasks = filteredTasks.filter((task) =>
@@ -47,7 +47,7 @@ const TaskList = ({
         "&::-webkit-scrollbar-thumb:hover": {
           background: "#FFA500",
         },
-      }}
+      }} //Tu preverjaš, ali je searchedTasks definiran in ali ima dolžino večjo od 0, preden začneš uporabljati map. To prepreči napako, če je searchedTasks undefined ali prazna tabela.
     >
       {searchedTasks && searchedTasks.length > 0 ? (
         searchedTasks.map((task, index) => (
