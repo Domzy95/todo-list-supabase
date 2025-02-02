@@ -16,43 +16,44 @@ const TaskList = ({
   filter,
 }) => {
   // Najprej filtriramo po kategoriji
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "completed") return task.completed;
-    if (filter === "incomplete") return !task.completed;
-    return true; // Vse naloge
-  });
+  const filteredTasks =
+    tasks?.filter((task) => {
+      if (filter === "completed") return task?.completed;
+      if (filter === "incomplete") return !task?.completed;
+      return true; // All tasks
+    }) || []; // Provide an empty array if `tasks` is undefined
 
   // Nato filtriramo po iskanju
   const searchedTasks = filteredTasks.filter((task) =>
     task.text.toLowerCase().includes(search.toLowerCase())
   );
   return (
-    <>
-      <VStack
-        overflowY="auto"
-        maxH="60vh"
-        mt={10}
-        spacing={2}
-        align="stretch"
-        w="100%"
-        //navpični drsnik
-        css={{
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#FF8C00",
-            borderRadius: "4px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#FFA500",
-          },
-        }}
-      >
-        {searchedTasks.map((t, index) => (
+    <VStack
+      overflowY="auto"
+      maxH="60vh"
+      mt={10}
+      spacing={2}
+      align="stretch"
+      w="100%"
+      //navpični drsnik
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "8px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#FF8C00",
+          borderRadius: "4px",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          background: "#FFA500",
+        },
+      }}
+    >
+      {searchedTasks && searchedTasks.length > 0 ? (
+        searchedTasks.map((task, index) => (
           <TaskItem
-            key={index}
-            task={t}
+            key={task.id || index}
+            task={task}
             index={index}
             toggleTask={toggleTask}
             deleteTask={deleteTask}
@@ -62,9 +63,11 @@ const TaskList = ({
             setEditedTask={setEditedTask}
             editedTask={editedTask}
           />
-        ))}
-      </VStack>
-    </>
+        ))
+      ) : (
+        <p style={{ color: "white", textAlign: "center" }}>No tasks found</p>
+      )}
+    </VStack>
   );
 };
 

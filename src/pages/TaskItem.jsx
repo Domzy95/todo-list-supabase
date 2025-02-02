@@ -17,6 +17,8 @@ const TaskItem = ({
   editedTask,
   setEditedTask,
 }) => {
+  // Preverimo, ali je task definiran pred uporabo
+  if (!task) return null; // Če task ni definiran, ne narišemo ničesar
   return (
     <>
       <HStack

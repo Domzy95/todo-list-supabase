@@ -63,12 +63,14 @@ export default function TodoApp() {
   // Ob zagonu aplikacije preberi shranjene naloge iz `localStorage`,
   // če naloge niso shranjene, inicializiraj seznam kot prazen.
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const parsedTasks = savedTasks.map((task) => ({
-      ...task,
-      timeCreated: new Date(task.timeCreated),
-    }));
-
+    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
+    // zagotovi da je savedtask array
+    const parsedTasks = Array.isArray(savedTasks)
+      ? savedTasks.map((task) => ({
+          ...task,
+          timeCreated: new Date(task.timeCreated),
+        }))
+      : [];
     setTasks(parsedTasks);
   }, []);
   // Ob vsaki spremembi nalog shrani posodobljen seznam nalog v `localStorage`.
