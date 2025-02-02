@@ -11,7 +11,6 @@ export default function TodoApp() {
   const [isEditing, setIsEditing] = useState("null");
   const [editedTask, setEditedTask] = useState("");
   const [filter, setFilter] = useState("all");
-
   // Dodaj nalogo v seznam nalog, če vnos ni prazen. To preprečuje dodajanje praznih nalog.
   const addTask = () => {
     if (task.trim()) {
@@ -41,14 +40,12 @@ export default function TodoApp() {
     setIsEditing("null");
     setEditedTask("");
   };
-
   // Preklopi stanje naloge med opravljeno in neopravljeno.
   // Posodobi seznam nalog tako, da se ustrezno spremeni status 'completed'.
   const toggleTask = (index) => {
     const confirmToggle = window.confirm(
       "Are you sure you want to mark this task as completed? After that, you won't be able to edit it anymore."
     );
-
     if (confirmToggle) {
       setTasks((prevTasks) =>
         prevTasks.map((task, i) =>
@@ -57,7 +54,6 @@ export default function TodoApp() {
       );
     }
   };
-
   // Odstrani nalogo iz seznama na določenem indeksu.
   const deleteTask = (index) => {
     if (window.confirm("Are you sure you want to delete this task?"))
@@ -67,7 +63,7 @@ export default function TodoApp() {
   // če naloge niso shranjene, inicializiraj seznam kot prazen.
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-    // zagotovi da je savedtask array
+    // zagotovi da je savedtask array da se izgnemo napaki
     const parsedTasks = Array.isArray(savedTasks)
       ? savedTasks.map((task) => ({
           ...task,
