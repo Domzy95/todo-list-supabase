@@ -45,14 +45,17 @@ export default function TodoApp() {
   // Preklopi stanje naloge med opravljeno in neopravljeno.
   // Posodobi seznam nalog tako, da se ustrezno spremeni status 'completed'.
   const toggleTask = (index) => {
-    window.confirm(
+    const confirmToggle = window.confirm(
       "Are you sure you want to mark this task as completed? After that, you won't be able to edit it anymore."
     );
-    setTasks((prevTasks) =>
-      prevTasks.map((task, i) =>
-        i === index ? { ...task, completed: !task.completed } : task
-      )
-    );
+
+    if (confirmToggle) {
+      setTasks((prevTasks) =>
+        prevTasks.map((task, i) =>
+          i === index ? { ...task, completed: !task.completed } : task
+        )
+      );
+    }
   };
 
   // Odstrani nalogo iz seznama na določenem indeksu.
