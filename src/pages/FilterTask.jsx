@@ -26,6 +26,16 @@ const FilterTask = ({ filter, setFilter }) => {
         >
           Completed
         </Button>
+        <Button
+          size="md"
+          color="white"
+          _hover={{ bg: "red.600" }}
+          borderRadius="md"
+          bg={filter === "incompleted" ? "red.600" : "gray.700"}
+          onClick={() => setFilter("incompleted")}
+        >
+          Incompleted
+        </Button>
       </HStack>
     </>
   );

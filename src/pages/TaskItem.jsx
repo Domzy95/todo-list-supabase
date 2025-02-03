@@ -79,7 +79,7 @@ const TaskItem = ({
                   _hover={{
                     color: "orange.600",
                   }}
-                  onClick={() => toggleTask(index)}
+                  onClick={() => toggleTask(task.id)}
                 />
               )}
               {!task.completed && (
