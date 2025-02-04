@@ -34,7 +34,7 @@ const FilterTask = ({ filter, setFilter }) => {
           bg={filter === "incompleted" ? "red.600" : "gray.700"}
           onClick={() => setFilter("incompleted")}
         >
-          Incompleted
+          Incomplete
         </Button>
       </HStack>
     </>
