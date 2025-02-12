@@ -44,7 +44,7 @@ const TaskItem = ({
               size="sm"
               bg="orange.500"
               _hover={{ bg: "orange.600" }}
-              onClick={() => saveTask(index)}
+              onClick={() => saveTask(task.id)}
             >
               Update
             </Button>
@@ -79,7 +79,7 @@ const TaskItem = ({
                   _hover={{
                     color: "orange.600",
                   }}
-                  onClick={() => toggleTask(task.id)}
+                  onClick={() => toggleTask(task.id, task.completed)}
                 />
               )}
               {!task.completed && (
@@ -98,7 +98,7 @@ const TaskItem = ({
                 color="white"
                 cursor="pointer"
                 _hover={{ color: "orange.600" }}
-                onClick={() => deleteTask(index)}
+                onClick={() => deleteTask(task.id)}
               />
             </HStack>
           </>

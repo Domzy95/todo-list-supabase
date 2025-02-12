@@ -3,7 +3,7 @@ import TaskInput from "./TaskInput";
 import FilterTask from "./FilterTask";
 import TaskList from "./TaskList";
 import { Box, Heading, Flex } from "@chakra-ui/react";
-
+import { supabase } from "../lib/supabase";
 export default function TodoApp() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
@@ -12,19 +12,24 @@ export default function TodoApp() {
   const [editedTask, setEditedTask] = useState("");
   const [filter, setFilter] = useState("all");
   // Dodaj nalogo v seznam nalog, če vnos ni prazen. To preprečuje dodajanje praznih nalog.
-  const addTask = () => {
-    if (task.trim()) {
-      setTasks([
-        ...tasks,
-        {
-          id: Date.now(),
-          text: task,
-          completed: false,
-          timeCreated: new Date().toISOString(),
-        },
-      ]);
-      setTask("");
+  //*SUPABASE ADD TASK
+  const addTask = async () => {
+    if (task.trim() === "") return;
+    const newTask = {
+      text: task,
+      completed: false,
+      timeCreated: new Date().toISOString(),
+    };
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert([newTask])
+      .select();
+    if (error) {
+      console.error("Error adding task:", error);
+      return;
     }
+    setTasks([...tasks, data[0]]);
+    setTask(""); // Po dodajanju počisti vnosno polje
   };
   // Nastavi stanje za urejanje naloge: shrani indeks naloge in njeno besedilo,
   // da omogoči prikaz vnosnega polja za urejanje.
@@ -34,54 +39,76 @@ export default function TodoApp() {
   };
   // Posodobi besedilo naloge na določenem indeksu in končaj urejanje.
   // Po končanem urejanju se izklopi način urejanja in izprazni besedilo.
-  const saveTask = (index) => {
+  //*SUPABASE SAVE TASK FUNKCIJA
+  const saveTask = async (taskId) => {
     if (editedTask.trim() === "") {
       alert("Task cannot be empty!");
       return;
     }
+    const { error } = await supabase
+      .from("tasks")
+      .update({ text: editedTask })
+      .eq("id", taskId)
+      .select();
+    if (error) {
+      console.error("Error updating task:", error);
+      return;
+    }
     setTasks((prevTasks) =>
-      prevTasks.map((t, i) => (i === index ? { ...t, text: editedTask } : t))
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, text: editedTask } : task
+      )
     );
-    setIsEditing("null");
+    setIsEditing(null);
     setEditedTask("");
   };
   // Preklopi stanje naloge med opravljeno in neopravljeno.
-  // Posodobi seznam nalog tako, da se ustrezno spremeni status 'completed'.
-  const toggleTask = (taskId) => {
+  //Posodobi seznam nalog tako, da se ustrezno spremeni status 'completed'.
+  //*TOGGLE TASK Z SUPABASE
+  const toggleTask = async (taskId, currentState) => {
     const confirmToggle = window.confirm(
       "Are you sure you want to mark this task as completed? After that, you won't be able to edit it anymore."
     );
     if (confirmToggle) {
-      setTasks((prevTasks) =>
-        prevTasks.map((task, i) =>
-          task.id === taskId ? { ...task, completed: !task.completed } : task
+      const { error } = await supabase
+        .from("tasks")
+        .update({ completed: !currentState })
+        .eq("id", taskId)
+        .select();
+      if (error) {
+        console.log("Error updating task:", error);
+        return;
+      }
+      setTasks(
+        tasks.map((task) =>
+          task.id === taskId ? { ...task, completed: !currentState } : task
         )
       );
     }
   };
-  // Odstrani nalogo iz seznama na določenem indeksu.
-  const deleteTask = (index) => {
-    if (window.confirm("Are you sure you want to delete this task?"))
-      setTasks(tasks.filter((_, i) => i !== index));
+  //*ZBRISE NALOGO IZ SUPABASE
+  const deleteTask = async (taskId) => {
+    if (!window.confirm("Are you sure you want to delete task?")) return;
+    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+    if (error) {
+      console.error("Error deleting task:", error);
+      return;
+    }
+    setTasks(tasks.filter((task) => task.id !== taskId));
   };
-  // Ob zagonu aplikacije preberi shranjene naloge iz `localStorage`,
-  // če naloge niso shranjene, inicializiraj seznam kot prazen.
+  //*FETCHA TASKE IZ SUPABASE
+  const fetchTasks = async () => {
+    const { data, error } = await supabase.from("tasks").select("*");
+    if (error) {
+      console.error("Napaka pri pridobivanju nalog:", error);
+      return;
+    }
+    setTasks(data); // Shrani podatke v stanje
+  };
+  // Kliči to funkcijo ob zagonu aplikacije (v `useEffect`)
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-    // zagotovi da je savedtask array da se izgnemo napaki
-    const parsedTasks = Array.isArray(savedTasks)
-      ? savedTasks.map((task) => ({
-          ...task,
-          timeCreated: new Date(task.timeCreated),
-        }))
-      : [];
-    setTasks(parsedTasks);
+    fetchTasks();
   }, []);
-  // Ob vsaki spremembi nalog shrani posodobljen seznam nalog v `localStorage`.
-  // To omogoča, da naloge ostanejo shranjene tudi po osvežitvi strani.
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
 
   return (
     <Flex align="top" justify="center" minH="100vh" bg="gray.900">
