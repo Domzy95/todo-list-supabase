@@ -56,7 +56,7 @@ export default function Auth({ onLogin }) {
       {" "}
       <VStack spacing={4}>
         <Heading mt={10} size="4xl" color="white">
-          Welcome to our To-Do app! <br /> Sign in and stay organized.
+          Welcome to our To-Do app! <br /> Sign in and stay organized ✅
         </Heading>
         <Input
           borderRadius="md"
@@ -65,7 +65,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w="30%"
+          w="20%"
           mt={10}
           placeholder="Email"
           value={email}
@@ -78,7 +78,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w="30%"
+          w="20%"
           mt={2}
           type="password"
           placeholder="Password"
