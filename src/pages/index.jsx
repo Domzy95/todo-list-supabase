@@ -210,7 +210,7 @@ export default function TodoApp() {
       <Box p={5} maxW="500px" h="100%" w="100%">
         <Box display="flex" justifyContent="flex-end" p={5}>
           <Flex alignItems="center" gap={4}>
-            <Box color="white" fontSize="md">
+            <Box color="white" fontSize={{ base: "sm", md: "md" }}>
               You are loged in as: <strong>{user.email}</strong>
             </Box>
             <Button
@@ -225,7 +225,12 @@ export default function TodoApp() {
           </Flex>
         </Box>
 
-        <Heading textStyle="5xl" color="white" mb={10} textAlign="center">
+        <Heading
+          fontSize={{ base: "2xl", md: "3xl", lg: "5xl" }}
+          color="white"
+          mb={10}
+          textAlign="center"
+        >
           Whats your plan for today ? 📋✅
         </Heading>
         <TaskInput
