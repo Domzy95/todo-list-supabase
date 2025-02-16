@@ -65,7 +65,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w="20%"
+          w={{ base: "80%", md: "40%" }}
           mt={10}
           placeholder="Email"
           value={email}
@@ -78,7 +78,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w="20%"
+          w={{ base: "80%", md: "40%" }}
           mt={2}
           type="password"
           placeholder="Password"
