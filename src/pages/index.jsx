@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import TaskInput from "./TaskInput";
 import FilterTask from "./FilterTask";
 import TaskList from "./TaskList";
-import { Box, Heading, Flex, Button } from "@chakra-ui/react";
+import { Box, Heading, Flex, Button, HStack, VStack } from "@chakra-ui/react";
 import { supabase } from "../lib/supabase";
 import { FiLogOut } from "react-icons/fi";
 import Auth from "./Auth";
+import { Spinner } from "@chakra-ui/react";
 export default function TodoApp() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
@@ -14,7 +15,9 @@ export default function TodoApp() {
   const [editedTask, setEditedTask] = useState("");
   const [filter, setFilter] = useState("all");
   const [user, setUser] = useState(null);
-  // Dodaj nalogo v seznam nalog, če vnos ni prazen. To preprečuje dodajanje praznih nalog.
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+
   //*SUPABASE ADD TASK
   const addTask = async () => {
     if (task.trim() === "") return;
@@ -44,7 +47,6 @@ export default function TodoApp() {
       console.error("Error adding task:", error);
       return;
     }
-
     // Počakamo, da se baza osveži in nato reloadamo seznam
     fetchTasks();
     setTask("");
@@ -63,7 +65,6 @@ export default function TodoApp() {
       alert("Task cannot be empty!");
       return;
     }
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -71,18 +72,15 @@ export default function TodoApp() {
       console.error("User not logged in");
       return;
     }
-
     const { error } = await supabase
       .from("tasks")
       .update({ text: editedTask })
       .eq("id", taskId)
-      .eq("user_id", user.id); // 👈 Filtriramo samo naloge trenutnega uporabnika
-
+      .eq("user_id", user.id); //  Filtriramo samo naloge trenutnega uporabnika
     if (error) {
       console.error("Error updating task:", error);
       return;
     }
-
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId ? { ...task, text: editedTask } : task
@@ -102,23 +100,19 @@ export default function TodoApp() {
       console.error("User not logged in");
       return;
     }
-
     const confirmToggle = window.confirm(
       "Are you sure you want to mark this task as completed? After that, you won't be able to edit it anymore."
     );
     if (!confirmToggle) return;
-
     const { error } = await supabase
       .from("tasks")
       .update({ completed: !currentState })
       .eq("id", taskId)
       .eq("user_id", user.id); // 👈 Filtriramo samo naloge trenutnega uporabnika
-
     if (error) {
       console.log("Error updating task:", error);
       return;
     }
-
     setTasks(
       tasks.map((task) =>
         task.id === taskId ? { ...task, completed: !currentState } : task
@@ -134,9 +128,7 @@ export default function TodoApp() {
       console.error("User not logged in");
       return;
     }
-
     if (!window.confirm("Are you sure you want to delete this task?")) return;
-
     const { error } = await supabase
       .from("tasks")
       .delete()
@@ -147,31 +139,31 @@ export default function TodoApp() {
       console.error("Error deleting task:", error);
       return;
     }
-
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
   //*FETCHA TASKE IZ SUPABASE
   const fetchTasks = async () => {
+    setIsLoading(true); // Začnemo z nalaganjem
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
       console.error("User not logged in");
+      setIsLoading(false);
       return;
     }
-
     const { data, error } = await supabase
       .from("tasks")
       .select("*")
-      .eq("user_id", user.id); // Filtriramo samo naloge trenutno prijavljenega uporabnika
-
+      .eq("user_id", user.id);
     if (error) {
       console.error("Error fetching tasks:", error);
-      return;
+    } else {
+      setTasks(data);
     }
-
-    setTasks(data);
+    setIsLoading(false); // Končamo nalaganje
   };
+
   //*PRIKAŽI TASKE OB REFRESHU IZ BAZE ALI OB PONOVNI ODJAVI IN PRIJAVI!
   useEffect(() => {
     const checkUser = async () => {
@@ -179,37 +171,60 @@ export default function TodoApp() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-
-      if (user) {
-        fetchTasks(); // 👈 Fetchaj naloge po prijavi
-      }
+      setIsLoadingUser(false); // Ko preverimo uporabnika, končamo nalaganje
     };
     checkUser();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchTasks();
+    }
+  }, [user]); // Naloge se naložijo takoj po prijavi!
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
   };
-
+  if (isLoadingUser) {
+    return (
+      <Flex justify="center" align="center" minH="100vh" bg="gray.900">
+        <Spinner size="xl" color="orange.500" />
+      </Flex>
+    );
+  }
+  //!ČE USER NI PRIJAVLJEN PRIKAZE LOGIN STRAN
   if (!user) {
-    return <Auth onLogin={setUser} />;
+    return (
+      <Auth
+        onLogin={(user) => {
+          setUser(user);
+          fetchTasks(); // Takoj naloži naloge po prijavi!
+        }}
+      />
+    );
   }
 
   return (
     <Flex align="top" justify="center" minH="100vh" bg="gray.900">
       <Box p={5} maxW="500px" h="100%" w="100%">
         <Box display="flex" justifyContent="flex-end" p={5}>
-          <Button
-            onClick={handleLogout}
-            size="lg"
-            bg="orange.500"
-            _hover={{ bg: "orange.600" }}
-          >
-            <FiLogOut />
-            Logout
-          </Button>
+          <Flex alignItems="center" gap={4}>
+            <Box color="white" fontSize="md">
+              You are loged in as: <strong>{user.email}</strong>
+            </Box>
+            <Button
+              onClick={handleLogout}
+              size="lg"
+              bg="orange.500"
+              _hover={{ bg: "orange.600" }}
+            >
+              <FiLogOut />
+              Logout
+            </Button>
+          </Flex>
         </Box>
+
         <Heading textStyle="5xl" color="white" mb={10} textAlign="center">
           Whats your plan for today ? 📋✅
         </Heading>
@@ -221,18 +236,25 @@ export default function TodoApp() {
           setSearch={setSearch}
         />
         <FilterTask filter={filter} setFilter={setFilter} />
-        <TaskList
-          filter={filter}
-          search={search}
-          tasks={tasks}
-          toggleTask={toggleTask}
-          deleteTask={deleteTask}
-          saveTask={saveTask}
-          startEditing={startEditing}
-          isEditing={isEditing}
-          setEditedTask={setEditedTask}
-          editedTask={editedTask}
-        />
+        {/* LOADING INDIKATOR */}
+        {isLoading ? (
+          <Flex justify="center" align="center" my={5}>
+            <Spinner size="xl" color="orange.400" />
+          </Flex>
+        ) : (
+          <TaskList
+            filter={filter}
+            search={search}
+            tasks={tasks}
+            toggleTask={toggleTask}
+            deleteTask={deleteTask}
+            saveTask={saveTask}
+            startEditing={startEditing}
+            isEditing={isEditing}
+            setEditedTask={setEditedTask}
+            editedTask={editedTask}
+          />
+        )}
       </Box>
     </Flex>
   );
