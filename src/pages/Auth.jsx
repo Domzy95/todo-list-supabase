@@ -10,8 +10,10 @@ import {
   Text,
   VStack,
   HStack,
+  Image,
 } from "@chakra-ui/react";
 import { CgLogIn } from "react-icons/cg";
+import { todo } from "../assets/todo.png";
 
 export default function Auth({ onLogin }) {
   const [email, setEmail] = useState("");
@@ -26,7 +28,7 @@ export default function Auth({ onLogin }) {
       email,
       password,
     });
-    if (error) setError(error.message);
+    if (error) setError("Please enter a valid email!");
     else alert("Check your email for a confirmation link!");
     setLoading(false);
   };
@@ -38,7 +40,7 @@ export default function Auth({ onLogin }) {
       email,
       password,
     });
-    if (error) setError(error.message);
+    if (error) setError("Missing email or password!");
     else onLogin(data.user);
     setLoading(false);
   };
@@ -58,6 +60,14 @@ export default function Auth({ onLogin }) {
         <Heading mt={10} size="4xl" color="white">
           Welcome to our To-Do app! <br /> Sign in and stay organized ✅
         </Heading>
+        <Image
+          mt={10}
+          align="top"
+          justify="center"
+          src="/assets/todo.png"
+          alt="To-Do App"
+          boxSize="150px"
+        />
         <Input
           borderRadius="md"
           borderColor="orange.500"
@@ -65,7 +75,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w={{ base: "80%", md: "30%", lg: "25%" }}
+          w={{ base: "80%", md: "20%", lg: "20%" }}
           mt={10}
           placeholder="Email"
           value={email}
@@ -78,7 +88,7 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w={{ base: "80%", md: "30%", lg: "25%" }}
+          w={{ base: "80%", md: "20%", lg: "20%" }}
           mt={2}
           type="password"
           placeholder="Password"

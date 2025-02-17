@@ -108,7 +108,7 @@ export default function TodoApp() {
       .from("tasks")
       .update({ completed: !currentState })
       .eq("id", taskId)
-      .eq("user_id", user.id); // 👈 Filtriramo samo naloge trenutnega uporabnika
+      .eq("user_id", user.id); // Filtriramo samo naloge trenutnega uporabnika
     if (error) {
       console.log("Error updating task:", error);
       return;
@@ -133,7 +133,7 @@ export default function TodoApp() {
       .from("tasks")
       .delete()
       .eq("id", taskId)
-      .eq("user_id", user.id); // 👈 Zagotovimo, da brišemo samo svoje naloge
+      .eq("user_id", user.id); //Zagotovimo, da brišemo samo svoje naloge
 
     if (error) {
       console.error("Error deleting task:", error);
@@ -209,8 +209,12 @@ export default function TodoApp() {
     <Flex align="top" justify="center" minH="100vh" bg="gray.900">
       <Box p={5} maxW="500px" h="100%" w="100%">
         <Box display="flex" justifyContent="flex-end" p={5}>
-          <Flex alignItems="center" gap={4}>
-            <Box color="white" fontSize={{ base: "sm", md: "md" }}>
+          <Flex
+            flexDirection={{ base: "column", md: "row" }}
+            alignItems="center"
+            gap={4}
+          >
+            <Box ml={10} color="white" fontSize={{ base: "sm", md: "md" }}>
               You are loged in as: <strong>{user.email}</strong>
             </Box>
             <Button
@@ -226,9 +230,11 @@ export default function TodoApp() {
         </Box>
 
         <Heading
-          fontSize={{ base: "2xl", md: "3xl", lg: "5xl" }}
+          fontSize={{ base: "4xl", md: "3xl", lg: "5xl" }}
           color="white"
+          mt={6}
           mb={10}
+          lineHeight={1.2}
           textAlign="center"
         >
           Whats your plan for today ? 📋✅
