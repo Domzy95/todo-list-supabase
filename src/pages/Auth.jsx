@@ -13,7 +13,6 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { CgLogIn } from "react-icons/cg";
-import { todo } from "../assets/todo.png";
 
 export default function Auth({ onLogin }) {
   const [email, setEmail] = useState("");
