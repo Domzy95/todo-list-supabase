@@ -4,7 +4,7 @@ import FilterTask from "./FilterTask";
 import TaskList from "./TaskList";
 import { Box, Heading, Flex, Button, HStack, VStack } from "@chakra-ui/react";
 import { supabase } from "../lib/supabase";
-import { FiLogOut } from "react-icons/fi";
+import { BiLogOut } from "react-icons/bi";
 import Auth from "./Auth";
 import { Spinner } from "@chakra-ui/react";
 export default function TodoApp() {
@@ -186,6 +186,7 @@ export default function TodoApp() {
     await supabase.auth.signOut();
     setUser(null);
   };
+  //prikaži spinner pri nalaganju
   if (isLoadingUser) {
     return (
       <Flex justify="center" align="center" minH="100vh" bg="gray.900">
@@ -214,7 +215,12 @@ export default function TodoApp() {
             alignItems="center"
             gap={4}
           >
-            <Box ml={10} color="white" fontSize={{ base: "sm", md: "md" }}>
+            <Box
+              mb={2}
+              textAlign="center"
+              color="white"
+              fontSize={{ base: "sm", md: "md" }}
+            >
               You are loged in as: <strong>{user.email}</strong>
             </Box>
             <Button
@@ -223,7 +229,7 @@ export default function TodoApp() {
               bg="orange.500"
               _hover={{ bg: "orange.600" }}
             >
-              <FiLogOut />
+              <BiLogOut />
               Logout
             </Button>
           </Flex>
@@ -232,8 +238,8 @@ export default function TodoApp() {
         <Heading
           fontSize={{ base: "4xl", md: "3xl", lg: "5xl" }}
           color="white"
-          mt={6}
-          mb={10}
+          mt={4}
+          mb={8}
           lineHeight={1.2}
           textAlign="center"
         >

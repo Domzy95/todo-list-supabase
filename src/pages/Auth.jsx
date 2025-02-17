@@ -56,11 +56,11 @@ export default function Auth({ onLogin }) {
     >
       {" "}
       <VStack spacing={4}>
-        <Heading mt={10} size="4xl" color="white">
+        <Heading mt={4} size="4xl" color="white">
           Welcome to our To-Do app! <br /> Sign in and stay organized ✅
         </Heading>
         <Image
-          mt={10}
+          mt={4}
           align="top"
           justify="center"
           src="/assets/todo.png"
@@ -75,7 +75,7 @@ export default function Auth({ onLogin }) {
           borderWidth="2px"
           size="lg"
           w={{ base: "80%", md: "20%", lg: "20%" }}
-          mt={10}
+          mt={4}
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
