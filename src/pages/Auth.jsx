@@ -20,9 +20,11 @@ export default function Auth({ onLogin }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  let canSignUp = true; //prepreči spam mailov
   const handleSignUp = async () => {
+    if (!canSignUp) return; // Če je že v teku, ne dovoli nove zahteve
     setLoading(true);
+    canSignUp = false; // Zaklenemo možnost klika
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -43,6 +45,7 @@ export default function Auth({ onLogin }) {
         duration: 6000,
         isClosable: true,
       });
+    setTimeout(() => (canSignUp = true), 10000); // Pocakaj 10 sekund
     setEmail("");
     setPassword("");
     setLoading(false);
@@ -96,11 +99,12 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w={{ base: "80%", md: "20%", lg: "20%" }}
+          w={{ base: "80%", md: "30%", lg: "20%" }}
           mt={4}
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <Input
           borderRadius="md"
@@ -109,12 +113,13 @@ export default function Auth({ onLogin }) {
           _placeholder={{ color: "grey" }}
           borderWidth="2px"
           size="lg"
-          w={{ base: "80%", md: "20%", lg: "20%" }}
+          w={{ base: "80%", md: "30%", lg: "20%" }}
           mt={2}
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
         <HStack>
           <Button
@@ -130,7 +135,7 @@ export default function Auth({ onLogin }) {
             isLoading={loading}
           >
             <CgLogIn />
-            Login
+            {loading ? "Logging in..." : "Login"}
           </Button>
           <Button
             _hover={{ bg: "orange.600" }}
@@ -144,7 +149,7 @@ export default function Auth({ onLogin }) {
             onClick={handleSignUp}
             isLoading={loading}
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </Button>
         </HStack>
         {error && <Text color="red.500">{error}</Text>}
