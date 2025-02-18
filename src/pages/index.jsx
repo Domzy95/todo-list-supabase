@@ -7,6 +7,8 @@ import { supabase } from "../lib/supabase";
 import { BiLogOut } from "react-icons/bi";
 import Auth from "./Auth";
 import { Spinner } from "@chakra-ui/react";
+import { Toaster, toaster } from "@/components/ui/toaster";
+
 export default function TodoApp() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState("");
@@ -18,9 +20,18 @@ export default function TodoApp() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  //*SUPABASE ADD TASK
+  //*SUPABASE FUNKCIJA ADD TASK
   const addTask = async () => {
-    if (task.trim() === "") return;
+    if (task.trim() === "") {
+      toaster.create({
+        title: "Error",
+        description: "Task cannot be empty!",
+        type: "error", // Uporabite `type`, ne `status`
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     // Pridobi trenutno prijavljenega uporabnika
     const {
       data: { user },
@@ -47,6 +58,13 @@ export default function TodoApp() {
       console.error("Error adding task:", error);
       return;
     }
+    toaster.create({
+      title: "Success",
+      description: "Task added successfully!",
+      type: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     // Počakamo, da se baza osveži in nato reloadamo seznam
     fetchTasks();
     setTask("");
@@ -62,9 +80,22 @@ export default function TodoApp() {
   //*SUPABASE SAVE TASK FUNKCIJA
   const saveTask = async (taskId) => {
     if (editedTask.trim() === "") {
-      alert("Task cannot be empty!");
+      toaster.create({
+        title: "Error",
+        description: "Task cannot be empty!",
+        type: "error", // Uporabite `type`, ne `status`
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
+    toaster.create({
+      title: "Success",
+      description: "Task updated successfully!",
+      type: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -91,7 +122,7 @@ export default function TodoApp() {
   };
   // Preklopi stanje naloge med opravljeno in neopravljeno.
   //Posodobi seznam nalog tako, da se ustrezno spremeni status 'completed'.
-  //*TOGGLE TASK Z SUPABASE
+  //*FUNKCIJA TOGGLE TASK Z SUPABASE
   const toggleTask = async (taskId, currentState) => {
     const {
       data: { user },
@@ -100,10 +131,6 @@ export default function TodoApp() {
       console.error("User not logged in");
       return;
     }
-    const confirmToggle = window.confirm(
-      "Are you sure you want to mark this task as completed? After that, you won't be able to edit it anymore."
-    );
-    if (!confirmToggle) return;
     const { error } = await supabase
       .from("tasks")
       .update({ completed: !currentState })
@@ -113,13 +140,22 @@ export default function TodoApp() {
       console.log("Error updating task:", error);
       return;
     }
+    toaster.create({
+      title: "Success",
+      description: `Task marked as ${
+        !currentState ? "completed" : "incompleted"
+      }!`,
+      type: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     setTasks(
       tasks.map((task) =>
         task.id === taskId ? { ...task, completed: !currentState } : task
       )
     );
   };
-  //*ZBRISE NALOGO IZ SUPABASE
+  //*FUNKCIJA ZBRISE NALOGO IZ SUPABASE
   const deleteTask = async (taskId) => {
     const {
       data: { user },
@@ -128,7 +164,13 @@ export default function TodoApp() {
       console.error("User not logged in");
       return;
     }
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    toaster.create({
+      title: "Success",
+      description: "Task deleted successfully!",
+      type: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     const { error } = await supabase
       .from("tasks")
       .delete()
@@ -141,7 +183,7 @@ export default function TodoApp() {
     }
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
-  //*FETCHA TASKE IZ SUPABASE
+  //*FUNKCIJA FETCHA TASKE IZ SUPABASE
   const fetchTasks = async () => {
     setIsLoading(true); // Začnemo z nalaganjem
     const {
@@ -181,12 +223,12 @@ export default function TodoApp() {
       fetchTasks();
     }
   }, [user]); // Naloge se naložijo takoj po prijavi!
-
+  //*FUNKCIJA LOGOUT
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
   };
-  //prikaži spinner pri nalaganju
+  //*prikaži spinner pri nalaganju
   if (isLoadingUser) {
     return (
       <Flex justify="center" align="center" minH="100vh" bg="gray.900">
@@ -208,6 +250,7 @@ export default function TodoApp() {
 
   return (
     <Flex align="top" justify="center" minH="100vh" bg="gray.900">
+      <Toaster />
       <Box p={5} maxW="500px" h="100%" w="100%">
         <Box display="flex" justifyContent="flex-end" p={5}>
           <Flex
@@ -216,7 +259,6 @@ export default function TodoApp() {
             gap={4}
           >
             <Box
-              mb={2}
               textAlign="center"
               color="white"
               fontSize={{ base: "sm", md: "md" }}
@@ -236,7 +278,7 @@ export default function TodoApp() {
         </Box>
 
         <Heading
-          fontSize={{ base: "4xl", md: "3xl", lg: "5xl" }}
+          fontSize={{ base: "4xl", md: "5xl", lg: "5xl" }}
           color="white"
           mt={4}
           mb={8}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { Toaster, toaster } from "@/components/ui/toaster";
 import {
   Box,
   Input,
@@ -22,24 +23,45 @@ export default function Auth({ onLogin }) {
 
   const handleSignUp = async () => {
     setLoading(true);
-    setError("");
-    const { user, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-    if (error) setError("Please enter a valid email!");
-    else alert("Check your email for a confirmation link!");
+    if (error)
+      toaster.create({
+        title: "Error",
+        description: "No user with this email was found!",
+        type: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    else
+      toaster.create({
+        title: "Success",
+        description: "Check your email for a confirmation link!",
+        type: "success",
+        duration: 6000,
+        isClosable: true,
+      });
+    setEmail("");
+    setPassword("");
     setLoading(false);
   };
 
   const handleLogin = async () => {
     setLoading(true);
-    setError("");
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) setError("Missing email or password!");
+    if (error)
+      toaster.create({
+        title: "Error",
+        description: "Missing email or password!",
+        type: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     else onLogin(data.user);
     setLoading(false);
   };
@@ -54,7 +76,7 @@ export default function Auth({ onLogin }) {
       w="100%"
       textAlign="center"
     >
-      {" "}
+      <Toaster />{" "}
       <VStack spacing={4}>
         <Heading mt={4} size="4xl" color="white">
           Welcome to our To-Do app! <br /> Sign in and stay organized ✅
