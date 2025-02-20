@@ -45,7 +45,7 @@ export default function Auth({ onLogin }) {
         duration: 6000,
         isClosable: true,
       });
-    setTimeout(() => (canSignUp = true), 10000); // Pocakaj 10 sekund
+    setTimeout(() => (canSignUp = true), 10000);
     setEmail("");
     setPassword("");
     setLoading(false);

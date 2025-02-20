@@ -26,7 +26,7 @@ export default function TodoApp() {
       toaster.create({
         title: "Error",
         description: "Task cannot be empty!",
-        type: "error", // Uporabite `type`, ne `status`
+        type: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -83,7 +83,7 @@ export default function TodoApp() {
       toaster.create({
         title: "Error",
         description: "Task cannot be empty!",
-        type: "error", // Uporabite `type`, ne `status`
+        type: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -203,7 +203,7 @@ export default function TodoApp() {
     } else {
       setTasks(data);
     }
-    setIsLoading(false); // Končamo nalaganje
+    setIsLoading(false);
   };
 
   //*PRIKAŽI TASKE OB REFRESHU IZ BAZE ALI OB PONOVNI ODJAVI IN PRIJAVI!
@@ -213,7 +213,7 @@ export default function TodoApp() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-      setIsLoadingUser(false); // Ko preverimo uporabnika, končamo nalaganje
+      setIsLoadingUser(false);
     };
     checkUser();
   }, []);
