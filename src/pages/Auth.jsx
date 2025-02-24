@@ -21,6 +21,22 @@ export default function Auth({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   let canSignUp = true; //prepreči spam mailov
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  if (!isValidEmail(email)) {
+    if (error) {
+      toaster.create({
+        title: "Error",
+        description: "Invalid email!", // Prikaže pravo Supabase napako
+        type: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+  }
   const handleSignUp = async () => {
     if (!canSignUp) return; // Če je že v teku, ne dovoli nove zahteve
     setLoading(true);
