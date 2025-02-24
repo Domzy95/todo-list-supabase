@@ -25,19 +25,21 @@ export default function Auth({ onLogin }) {
     if (!canSignUp) return; // Če je že v teku, ne dovoli nove zahteve
     setLoading(true);
     canSignUp = false; // Zaklenemo možnost klika
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-    if (error)
+
+    if (error) {
       toaster.create({
         title: "Error",
-        description: "No user with this email was found!",
+        description: error.message, // Prikaže pravo Supabase napako
         type: "error",
         duration: 3000,
         isClosable: true,
       });
-    else
+    } else {
       toaster.create({
         title: "Success",
         description: "Check your email for a confirmation link!",
@@ -45,12 +47,13 @@ export default function Auth({ onLogin }) {
         duration: 6000,
         isClosable: true,
       });
+    }
+
     setTimeout(() => (canSignUp = true), 10000);
     setEmail("");
     setPassword("");
     setLoading(false);
   };
-
   const handleLogin = async () => {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
