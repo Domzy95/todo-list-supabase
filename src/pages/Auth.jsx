@@ -22,7 +22,7 @@ export default function Auth({ onLogin }) {
   const [error, setError] = useState("");
   let canSignUp = true; //prepreči spam mailov
   const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   };
 
   if (!isValidEmail(email)) {
